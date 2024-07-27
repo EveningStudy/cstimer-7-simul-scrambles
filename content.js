@@ -1,31 +1,31 @@
-var scramble=document.getElementById("scrambleTxt");
-var scrambleSize=scramble.style.fontSize;
+var scramble = document.getElementById("scrambleTxt");
+var scrambleSize = scramble.style.fontSize;
 var previousScramble = ""
 var currentScramble = ""
 
-var newScramble='<h1 id="newScramble" style="font-weight: normal"></h1>';
-scramble.insertAdjacentHTML('afterend', newScramble);
+var newScrambleElement = '<h1 id="newScramble" style="font-weight: normal"></h1>';
+scramble.insertAdjacentHTML('afterend', newScrambleElement);
 
 checkEvent();
 
-function checkEvent(){
+function checkEvent() {
     var events = document.getElementsByTagName("select");
-    if (events[events.length -10].value=="clkwca"){
+    if (events[events.length - 10].value == "clkwca") {
         scramble.style.fontSize = "0px";
         waitFor(_ => document.getElementById("scrambleTxt").innerText != "Scrambling...")
             .then(_ => {
                 var currentScramble = document.getElementById("scrambleTxt").innerText;
-                if (currentScramble!=previousScramble){
-                    previousScramble=currentScramble;
-                    document.getElementById("newScramble").innerText=convertScramble(currentScramble);
+                if (currentScramble != previousScramble) {
+                    previousScramble = currentScramble;
+                    document.getElementById("newScramble").innerHTML = convertScramble(currentScramble);
                 }
             });
-    }
-    else {
-        document.getElementById("newScramble").innerText="";
-        scramble.style.fontSize=scrambleSize;
+    } else {
+        document.getElementById("newScramble").innerText = "";
+        scramble.style.fontSize = scrambleSize;
     }
 }
+
 
 const matrix = [['0','1','-1','-1','0','0','0','0','0','0','0','0','-1','0'],['0','0','0','0','0','0','0','0','0','0','0','1','0','-1'],['0','-1','0','1','0','0','0','0','0','0','0','0','0','0'],['0','0','0','0','0','0','0','0','0','0','0','0','-1','1'],['0','1','0','0','-1','0','0','0','0','0','0','0','0','0'],['-1','0','0','1','0','0','0','0','0','0','0','0','1','-1'],['0','-1','1','0','1','0','1','-1','0','0','1','0','1','0'],['1','0','0','-1','0','-1','0','0','1','1','0','-1','0','1'],['0','0','0','0','-1','0','0','1','0','0','0','0','0','0'],['0','0','0','0','0','1','0','0','-1','-1','1','0','0','0'],['0','0','0','0','0','1','0','-1','0','0','0','0','0','0'],['0','0','0','0','0','0','0','0','0','1','-1','0','0','0'],['0','0','0','0','0','-1','-1','1','0','0','-1','0','0','0'],['0','0','0','0','0','0','0','0','0','-1','0','1','0','0']]
 pinConversions = {
@@ -50,19 +50,19 @@ pinConversions = {
 const l = ['L','A','B','C','D','E','F','G','H','I','J','K','L']
 function convertScramble(s){
     let scramble = convert(s)
-    let tempArray = [];
-    for (let i=0; i<14; i++) {
+    let tempArray = []; for (let i=0; i<14; i++) {
         let x = 0;
         for (let n=0; n<14; n++) {
             x += scramble[n]*parseInt(matrix[i][n])
         }
         tempArray.push((x+144)%12);
     }
-    let newScramble = l[12-tempArray[1]]+l[12-tempArray[0]]+" "+l[12-tempArray[3]]+l[12-tempArray[2]]+" "+l[12-tempArray[5]]+l[12-tempArray[4]]+" "+l[12-tempArray[6]]+l[12-tempArray[7]]+" "+l[12-tempArray[8]]+l[12-tempArray[9]]+" "+l[12-tempArray[10]]+l[12-tempArray[11]]+" "+l[12-tempArray[12]]+l[12-tempArray[13]]+" "+pinConversions[s.split(" ").slice(15).join(" ")];
+    let newScramble = l[12 - tempArray[1]] + l[12 - tempArray[0]] + " " + l[12 - tempArray[3]] + l[12 - tempArray[2]] + " " + l[12 - tempArray[5]] + l[12 - tempArray[4]] + " " + l[12 - tempArray[6]] + l[12 - tempArray[7]] + " " + l[12 - tempArray[8]] + l[12 - tempArray[9]] + " " + l[12 - tempArray[10]] + l[12 - tempArray[11]] + " " + l[12 - tempArray[12]] + l[12 - tempArray[13]] + " " + pinConversions[s.split(" ").slice(15).join(" ")]; 
+    let hiddenContent = "";
     //Delete the line in between these two comments to get rid of the memo
-    newScramble += " -- "+l[tempArray[1]]+l[tempArray[0]]+" "+l[tempArray[3]]+l[tempArray[2]]+" "+l[tempArray[5]]+l[tempArray[4]]+" "+l[tempArray[6]]+l[tempArray[7]]+" "+l[tempArray[8]]+l[tempArray[9]]+" "+l[tempArray[10]]+l[tempArray[11]]+" "+l[tempArray[12]]+l[tempArray[13]];
+    hiddenContent = " -- " + '<span class="hidden-content">' + l[tempArray[1]] + l[tempArray[0]] + " " + l[tempArray[3]] + l[tempArray[2]] + " " + l[tempArray[5]] + l[tempArray[4]] + " " + l[tempArray[6]] + l[tempArray[7]] + " " + l[tempArray[8]] + l[tempArray[9]] + " " + l[tempArray[10]] + l[tempArray[11]] + " " + l[tempArray[12]] + l[tempArray[13]] + '</span>';
     //Delete the line in between these two comments to get rid of the memo
-    return newScramble;
+    return newScramble + hiddenContent;
 }
 
 function convert(s){
@@ -109,3 +109,17 @@ function waitFor(conditionFunction) {
   
     return new Promise(poll);
 }
+
+var style = document.createElement('style');
+style.innerHTML = `
+    .hidden-content {
+        background-color: #d3d3d3; 
+        color: transparent; 
+        transition: color 0.5s ease; 
+        display: inline-block;
+    }
+    .hidden-content:hover {
+        color: inherit; 
+    }
+`;
+document.head.appendChild(style);
