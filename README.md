@@ -15,6 +15,8 @@ If you need any help with this let me know!
 
 If you don't use A-L for 1-12 and want to change the notation:
 Go to line 50 and edit the "const l" variable with what you use instead of each letter
+已更改为符合中国人的7simul编码:123456abcdef
 
+加上了hover后显示解法效果
 If you never train excecution and want to get rid of the memo:
 Delete line 63
